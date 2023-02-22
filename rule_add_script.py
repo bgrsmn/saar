@@ -1,6 +1,7 @@
 import pymysql
 import os
 
+# Establishing the database connection
 conn = pymysql.connect(host='X.X.X.X', user='xxxxx', password='xxxxxx', db='xxxxxxx')
 
 if conn.open:
@@ -13,7 +14,7 @@ dosyalar = os.listdir(dizin)
 
 cursor = conn.cursor()
 
-# en yüksek kural ID'sini bul
+# Find the highest rule ID
 cursor.execute("SELECT * FROM cc_store WHERE STORETYPE = 'CONF_CRR_PLUGIN' ORDER BY id DESC LIMIT 0, 1")
 data = cursor.fetchone()
 print(data)
@@ -29,12 +30,12 @@ for dosya in dosyalar:
         veri = ""
         with open(dosya_yolu, "r") as f:
             veri = f.read()
-            # Verileri burada kullanabilirsiniz
+            # You can use the data here
         print(veri)
         print("------------------------------------------")
         sql = "INSERT INTO cc_store (NAME, STORETYPE, ISSYSTEM, DATA, ENTERDATE, DESCRIPTION, VIEWRIGHT, EDITRIGHT, ISDELETED) VALUES (%s, 'CONF_CRR_PLUGIN', 0, %s, '2022-09-22 17:00:00', NULL, NULL, NULL, NULL)"
         cursor.execute(sql, (str(count + 1), veri))
         conn.commit()
     count += 1
-# Veritabanı bağlantısının kapatılması
+# Closing the database connection
 conn.close()
