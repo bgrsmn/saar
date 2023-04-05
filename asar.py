@@ -42,6 +42,7 @@ if conn.open:
 else:
     print("Database connection failed.")
 
+# Give the path of the category files you have added
 root_directory = r"/root/ruletest"
 category_files = {}
 
