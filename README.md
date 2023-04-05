@@ -4,9 +4,17 @@
 
 ##### Siem Auto Add Rule
 
+1. [Code Description](https://github.com/bgrsmn/saar#code-description#codedescription)
+2. [Tech](https://github.com/bgrsmn/saar#tech)
+3. [Installation](https://github.com/bgrsmn/saar#installation)
+4. [Usage](https://github.com/bgrsmn/saar#usage)
+5. [To Do](https://github.com/bgrsmn/saar#to-do)
+6. [Usage](https://github.com/bgrsmn/saar#usage)
+7. [License](https://github.com/bgrsmn/saar#license)
+
 ## Code Description
 
-- This project helps you manage the rules in a Siem product in a more organized way. By categorizing the rules, you can keep track of them more easily. In addition, it enables the addition of correlation rules with their categories to your Siem product, making it easier to view the added rules in the Siem web interface and speeding up your workflow.
+This project helps you manage the rules in a Siem product in a more organized way. By categorizing the rules, you can keep track of them more easily. In addition, it enables the addition of correlation rules with their categories to your Siem product, making it easier to view the added rules in the Siem web interface and speeding up your workflow.
 
 ## Tech
 
@@ -71,7 +79,7 @@ Finally, you can see that the rules have been added when you log in to the SIEM 
 iisreset
 ```
 
-#### To Do
+## To Do
 
 For production release:
 
