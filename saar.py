@@ -137,6 +137,6 @@ for category in os.listdir(root_directory):
                     conn.commit()
                     count += 1
 
-print("{} kategorisine {} kural dosyası başarıyla eklenmiştir.".format(category,file))
+print("{} to the category {} rule file successfully added.".format(category,file))
 
 conn.close()					   
