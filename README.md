@@ -4,10 +4,6 @@
 
 ##### Siem Auto Add Rule
 
-1. [Code Description](#my-first-title)
-2. [Tech](#my-second-title)
-
-
 ## Code Description
 
 - This project helps you manage the rules in a Siem product in a more organized way. By categorizing the rules, you can keep track of them more easily. In addition, it enables the addition of correlation rules with their categories to your Siem product, making it easier to view the added rules in the Siem web interface and speeding up your workflow.
