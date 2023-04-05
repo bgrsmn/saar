@@ -1,5 +1,7 @@
 # Saar 
 
+![alt text](https://github.com/bgrsmn/saar/blob/92352400e0a51b567a4de25bcd053ede03c478da/favicon.png "Logo Title Text 1")
+
 ##### Siem Auto Add Rule
 
 ## Code Description
