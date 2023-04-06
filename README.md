@@ -31,7 +31,7 @@ And of course saar itself is open source with a [public repository][bgrsmn] on G
 You can manually download the required libraries for the code to run or use the `python_venv.sh` script to run it in an isolated environment.
 
 ```sh
-python_venv.sh
+bash python_venv.sh
 ```
 
 ```sh
