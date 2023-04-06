@@ -136,7 +136,6 @@ for category in os.listdir(root_directory):
                     cursor.execute("INSERT INTO cc_store (NAME, STORETYPE, ISSYSTEM, DATA, ENTERDATE, DESCRIPTION, VIEWRIGHT, EDITRIGHT, ISDELETED) VALUES (%s, 'CONF_CRR_PLUGIN', 0, %s, '2022-09-22 17:00:00', NULL, NULL, NULL, NULL)", (str(count + 1), data.replace("&lt;","<").replace("&gt;",">")))
                     conn.commit()
                     count += 1
-
-print("{} to the category {} rule file successfully added.".format(category,file))
+                    print("{} to the category {} rule file successfully added.".format(category,file))
 
 conn.close()					   
