@@ -85,7 +85,7 @@ sudo pkill -f -9 dotnet
 sudo pkill -f -9 LOGCACHE
 
 # Connect to MySQL and truncate tables
-sudo mysql -uclog -p -e "use cryptosimpir; truncate pir_jobs; truncate pir_jobcancelrequests; truncate pir_currentmasters; truncate pir_currentmasterscandidates;"
+sudo mysql -u(username) -p -e "use cryptosimpir; truncate pir_jobs; truncate pir_jobcancelrequests; truncate pir_currentmasters; truncate pir_currentmasterscandidates;"
 
 # Start pirweb and cryptosimpir services
 sudo systemctl start pirweb
