@@ -56,14 +56,14 @@ fi
 
 ## Usage
 
-To successfully run the code, you need to run the  `saar.py ` file first, which enables the addition of correlation rules with their categories to your Siem product. You need to specify the path of the venv file that you run in an isolated environment to perform this operation. For example, it can be specified as  `/root/venv/bin/python3 saar.py `
+To successfully run the code, you need to run the  `saar.py` file first, which enables the addition of correlation rules with their categories to your Siem product. You need to specify the path of the venv file that you run in an isolated environment to perform this operation. For example, it can be specified as  `/root/venv/bin/python3 saar.py `
 
 First Tab:
 ```sh
 python3 saar.py
 ```
 
-After successfully running the code, the   `clean_sıem.sh` script can be used to view the rules in the Siem web interface. This script checks whether the rules have been added or not by entering the Siem web interface after the relevant workers have performed the truncate operation. To use this script, the   `bash clean_sıem.sh  ` command can be used.
+After successfully running the code, the   `clean_sıem.sh` script can be used to view the rules in the Siem web interface. This script checks whether the rules have been added or not by entering the Siem web interface after the relevant workers have performed the truncate operation. To use this script, the   `bash clean_sıem.sh ` command can be used.
 
 Second Tab:
 
