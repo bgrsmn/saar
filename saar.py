@@ -2,53 +2,51 @@ import xml.etree.ElementTree as ET
 import pymysql
 import os
 
-# Veritabanı bağlantısının açılması
+# Opening a database connection
 conn = pymysql.connect(host='X.X.X.X', user='XXXX', password='XXXX', db='XXXX')
 
 if conn.open:
-    print("Veritabanı bağlantısı başarılı.")
+    print("Database connection successful.")
 else:
-    print("Veritabanı bağlantısı başarısız.")
+    print("Database connection failed.")
 
+# Dictionary to store categories from XML data
+category_dictionary = {}
+print(type(category_dictionary))
 
-kategori_sozluk = {}
-print(type(kategori_sozluk))
 try:
     with conn.cursor() as cursor:
-        # CONF_CRR_CATEGORY tablosundan xml verileri çekilir
+        # Fetching XML data from the CONF_CRR_CATEGORY table
         cursor.execute("SELECT DATA FROM cc_store WHERE STORETYPE = 'CONF_CRR_CATEGORY'")
-        # Her bir satır için XML verileri işlenir
+        # Processing XML data for each row
         for row in cursor:
             xml_data = row[0]
-            # XML içindeki id ve name değerleri çekilir
+            # Extracting id and name values from XML
             root = ET.fromstring(xml_data)
             for category in root.findall('category'):
                 category_id = category.get('id')
                 category_name = category.get('name')
                 if category_name is not None:
-                   kategori_sozluk[category_id] = category_name
+                    category_dictionary[category_id] = category_name
 
 finally:
-    # Veritabanı bağlantısının kapatılması
+    # Closing the database connection
     conn.close()
 
-
-#print(kategori_sozluk)
-
-
+# Reconnecting to the database
 conn = pymysql.connect(host='X.X.X.X', user='XXXX', password='XXXX', db='XXXX')
 
 if conn.open:
-    print("Veritabanı bağlantısı başarılı.")
+    print("Database connection successful.")
 else:
-    print("Veritabanı bağlantısı başarısız.")
+    print("Database connection failed.")
 
-root_dizin = r"/root/ruletest"
-kategori_dosyalari = {}
+root_directory = r"/root/ruletest"
+category_files = {}
 
 cursor = conn.cursor()
 
-# en yüksek kural ID'sini bul
+# Finding the highest rule ID
 cursor.execute("SELECT * FROM cc_store WHERE STORETYPE = 'CONF_CRR_PLUGIN' ORDER BY id DESC LIMIT 0, 1")
 data = cursor.fetchone()
 #print(data)
@@ -58,79 +56,69 @@ if data is not None:
 else:
     count = 0
 
-for kategori in os.listdir(root_dizin):
-    kategori_dizini = os.path.join(root_dizin, kategori)
-    if os.path.isdir(kategori_dizini):
-        dosyalar = os.listdir(kategori_dizini)
-        for dosya in dosyalar:
-            dosya_yolu = os.path.join(kategori_dizini, dosya)
-            if os.path.isfile(dosya_yolu):
-                veri = ""
-                with open(dosya_yolu, "r") as f:
-                    veri = f.read()
-                    # Verileri burada kullanabilirsiniz
-                #print(veri)
+# Iterating through directories in the root_directory
+for category in os.listdir(root_directory):
+    category_directory = os.path.join(root_directory, category)
+    if os.path.isdir(category_directory):
+        files = os.listdir(category_directory)
+        for file in files:
+            file_path = os.path.join(category_directory, file)
+            if os.path.isfile(file_path):
+                data = ""
+                with open(file_path, "r") as f:
+                    data = f.read()
+                    # You can use the data here
+                #print(data)
                 #print("------------------------------------------")
 
-                # Kural adını dosya isminden al
-                kural_adi = dosya.split(".")[0]
+                # Extracting rule name from the file name
+                rule_name = file.split(".")[0]
 
-                # Veritabanında aynı isimde bir kural var mı diye kontrol et
-                cursor.execute("SELECT * FROM cc_store WHERE DATA LIKE '%name=\"{}\"%' AND STORETYPE = 'CONF_CRR_PLUGIN'".format(kural_adi))
+                # Checking if a rule with the same name already exists in the database
+                cursor.execute("SELECT * FROM cc_store WHERE DATA LIKE '%name=\"{}\"%' AND STORETYPE = 'CONF_CRR_PLUGIN'".format(rule_name))
                 data = cursor.fetchone()
                 if data is not None:
-                    print(f"Kural {kural_adi} zaten veritabanında var.")
+                    print(f"Rule {rule_name} already exists in the database.")
                 else:
-                    # Yeni kuralı veritabanına ekle
-                    cursor.execute("INSERT INTO cc_store (NAME, STORETYPE, ISSYSTEM, DATA, ENTERDATE, DESCRIPTION, VIEWRIGHT, EDITRIGHT, ISDELETED) VALUES (%s, 'CONF_CRR_PLUGIN', 0, %s, '2022-09-22 17:00:00', NULL, NULL, NULL, NULL)", (str(count + 1), veri))
+                    # Adding the new rule to the database
+                    cursor.execute("INSERT INTO cc_store (NAME, STORETYPE, ISSYSTEM, DATA, ENTERDATE, DESCRIPTION, VIEWRIGHT, EDITRIGHT, ISDELETED) VALUES (%s, 'CONF_CRR_PLUGIN', 0, %s, '2022-09-22 17:00:00', NULL, NULL, NULL, NULL)", (str(count + 1), data))
                     conn.commit()
                     count += 1
-                    if kategori not in kategori_dosyalari:
-                       kategori_dosyalari[kategori] = [dosya_yolu]
+                    if category not in category_files:
+                        category_files[category] = [file_path]
                     else:
-                       kategori_dosyalari[kategori].append(dosya_yolu)
-                    print(f"Kural {kural_adi} eklendi.")
+                        category_files[category].append(file_path)
+                    print(f"Rule {rule_name} added.")
 
-#Bağlantıyı Kapat
-#conn.close()
+# Processing categories for each category in the sample list
+for category in category_files.keys():
+    for category_id, category_name in category_dictionary.items():
+        if category_name == category:
+            for path in category_files[category]:
+                # Parsing the XML file
+                tree = ET.parse(path)
+                root = tree.getroot()
+                for plugin in root.iter('rule'):
+                    # Processing only those with a specific category
+                    category_id_element = plugin.find('category_id')
+                    # If the category_id tag is not present, create the tag and set it to 10001
+                    if category_id_element is None:
+                        category_element = ET.SubElement(plugin, 'category_id')
+                        category_element.text = category_id
+                        print("category_id:{}".format(str(category_id)))
+                    else:
+                        category_id_element.text = category_id
+                print("------------")
+                # Saving the XML file
+                tree.write(path)
+                #print(ET.tostring(root))
 
-# veritabanındaki kategori listesi
-
-#print(kategori_sozluk)
-
-
-#print(kategori_dosyalari)
-
-# örnek listenin her bir kategorisi için veritabanındaki kategorileri kontrol et
-for kategori in kategori_dosyalari.keys():
-    for category_id, category in kategori_sozluk.items():
-        if category == kategori:
-            for path in kategori_dosyalari[kategori]:
-              # XML dosyasının okunması
-              tree = ET.parse(path)
-              root = tree.getroot()
-              for plugin in root.iter('rule'):
-                 # Sadece belirli bir kategoriye sahip olanları işleme alma
-                 categoryid = plugin.find('category_id')
-                 # Eğer category_id etiketi yoksa, etiketi oluşturma ve 10001 değerini verme
-                 if categoryid is None:
-                    category = ET.SubElement(plugin, 'category_id')
-                    category.text = category_id
-                    print("category_id:{}".format(str(category_id)))
-                 else:
-                    categoryid.text = category_id
-              print("------------")
-              # XML dosyasını kaydetme
-              tree.write(path)
-              #print(ET.tostring(root))
-
-
-dizin = r"/root/ruletest"
-dosyalar = os.listdir(dizin)
+directory = r"/root/ruletest"
+files = os.listdir(directory)
 
 cursor = conn.cursor()
 
-# en yüksek kural ID'sini bul
+# Finding the highest rule ID
 cursor.execute("SELECT * FROM cc_store WHERE STORETYPE = 'CONF_CRR_PLUGIN' ORDER BY id DESC LIMIT 0, 1")
 data = cursor.fetchone()
 #print(data)
@@ -140,21 +128,20 @@ if data is not None:
 else:
     count = 0
 
-for dosya in dosyalar:
-    dosya_yolu = os.path.join(dizin, dosya)
-    if os.path.isfile(dosya_yolu):
-        veri = ""
-        with open(dosya_yolu, "r") as f:
-            veri = f.read()
-            # Verileri burada kullanabilirsiniz
-        #print(veri)
+# Iterating through files in the directory
+for file in files:
+    file_path = os.path.join(directory, file)
+    if os.path.isfile(file_path):
+        data = ""
+        with open(file_path, "r") as f:
+            data = f.read()
+            # You can use the data here
+        #print(data)
         print("------------------------------------------")
         sql = "INSERT INTO cc_store (NAME, STORETYPE, ISSYSTEM, DATA, ENTERDATE, DESCRIPTION, VIEWRIGHT, EDITRIGHT, ISDELETED) VALUES (%s, 'CONF_CRR_PLUGIN', 0, %s, '2022-09-22 17:00:00', NULL, NULL, NULL, NULL)"
-        cursor.execute(sql, (str(count + 1), veri))
+        cursor.execute(sql, (str(count + 1), data))
         conn.commit()
     count += 1
 
-
-# Veritabanı bağlantısının kapatılması
-
+# Closing the database connection
 conn.close()
